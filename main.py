@@ -36,6 +36,8 @@ print(data2.shape)
 #sampling data by using cross validation
 kf=KFold(n_splits=20,random_state=1,shuffle=True)
 for train_index,test_index in kf.split(HD):
+    x=HD['age','sex','cp','trestbps','chol','fbs','restecg','thalach','exang','oldpeak','slope','ca','thal']
+    y=HD['target']
     x_train , x_test, y_train , y_test= x[train_index],x[test_index],y[train_index],y[test_index]
 
 
