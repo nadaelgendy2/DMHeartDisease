@@ -36,8 +36,8 @@ print(data2.shape)
 #sampling data by stratified sampling
 ds=pd.DataFrame(HD)
 print(ds)
-dsgroup=ds.groupby('age', group_keys=Fasle)
-dssample=dsgroup.apply(lambda x: x.sample(frac=0.75))
+dsgroup=ds.groupby('age', group_keys=False)
+dssample=dsgroup.apply(lambda x: x.sample(frac=0.6))
 print(dssample)
 
                        
