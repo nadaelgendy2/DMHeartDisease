@@ -33,12 +33,15 @@ IQR = Q3-Q1
 data2 = HD[~((HD<(Q1-1.5*IQR))|(HD>(Q3+1.5*IQR))).any(axis=1)]
 print(data2.shape)
 
-#sampling data by using cross validation
-kf=KFold(n_splits=20,random_state=1,shuffle=True)
-for train_index,test_index in kf.split(HD):
-    x=HD['age','sex','cp','trestbps','chol','fbs','restecg','thalach','exang','oldpeak','slope','ca','thal']
-    y=HD['target']
-    x_train , x_test, y_train , y_test= x[train_index],x[test_index],y[train_index],y[test_index]
+#sampling data by stratified sampling
+ds=pd.DataFrame(HD)
+print(ds)
+dsgroup=ds.groupby('age', group_keys=Fasle)
+dssample=dsgroup.apply(lambda x: x.sample(frac=0.75))
+print(dssample)
+
+                       
+
 
 
 
