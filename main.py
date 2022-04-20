@@ -21,8 +21,8 @@ HD=HD.drop_duplicates()
 #plt.show()
 
 #remove outliers
-Q1 = HD.quantile(0.25)
-Q3 = HD.quantile(0.75)
+Q1 = HD.quantile(0.3)
+Q3 = HD.quantile(0.7)
 IQR = Q3-Q1
 HD = HD[~((HD<(Q1-1.5*IQR))|(HD>(Q3+1.5*IQR))).any(axis=1)]
 
@@ -33,6 +33,6 @@ print(HD.shape)
 #shuffling and sampling data by stratified sampling
 HD=HD.sample(frac=1)
 dsgroup=HD.groupby('age', group_keys=False)
-dssample=dsgroup.apply(lambda x: x.sample(frac=0.55))
+dssample=dsgroup.apply(lambda x: x.sample(frac=0.6))
 #print(dssample)
 print(dssample.shape)
