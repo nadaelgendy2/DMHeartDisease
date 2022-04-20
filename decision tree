@@ -1,1 +1,84 @@
 
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+from scipy.stats import randint
+from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import accuracy_score,confusion_matrix,classification_report
+from sklearn.model_selection import train_test_split
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.model_selection import RandomizedSearchCV
+
+HD=pd.read_csv("heart.csv")
+HD=HD.drop_duplicates()
+
+#remove outliers
+Q1 = HD.quantile(0.25)
+Q3 = HD.quantile(0.75)
+IQR = Q3-Q1
+data2 = HD[~((HD<(Q1-1.5*IQR))|(HD>(Q3+1.5*IQR))).any(axis=1)]
+#print(data2.shape)
+
+
+def printingScores(clf, x, y,test):
+    if test == True:
+        pred = clf.predict(x)
+        clf_report = pd.DataFrame(classification_report(y, pred, output_dict=True))
+        print("Train Result:\n================================================")
+        print(f"Accuracy Score: {accuracy_score(y, pred) * 100:.2f}%")
+        print("_______________________________________________")
+        print(f"CLASSIFICATION REPORT:\n{clf_report}")
+        print("_______________________________________________")
+        print(f"Confusion Matrix: \n {confusion_matrix(y, pred)}\n")
+
+    else:
+        pred = clf.predict(x)
+        clf_report = pd.DataFrame(classification_report(y, pred, output_dict=True))
+        print("Test Result:\n")
+        print(f"Accuracy Score: {accuracy_score(y, pred) * 100:.2f}%")
+        print("_______________________________________________")
+        print(f"CLASSIFICATION REPORT:\n{clf_report}")
+        print(f"Confusion Matrix: \n {confusion_matrix(y, pred)}\n")
+
+
+def Decisiontree_Classifier():
+
+    columns_ = []
+    for column in data2.columns:
+        if len(data2[column].unique()) <= 10:
+            columns_.append(column)
+
+    #create dummies values
+    columns_.remove('target')
+    data_set = pd.get_dummies(data2, columns = columns_)
+
+    #using standardScaler for features which .get_dummies can't process in it.
+    st_scaler= StandardScaler()
+    scale_columns = ['age', 'trestbps', 'chol', 'thalach', 'oldpeak']
+    data_set[scale_columns] = st_scaler.fit_transform(data_set[scale_columns])
+
+    #cross validation train,test,split
+    X= data2.drop('target', axis=1)
+    Y = data2.target
+
+    X_train, X_test, y_train, y_test = train_test_split(X,Y, test_size=0.25,random_state=0)
+    """sc = StandardScaler()
+    X_train = sc.fit_transform(X_train)
+    X_test = sc.transform(X_test)"""
+
+    param_dist={"max_depth":[3,None],
+                "min_samples_leaf":randint(1,9),
+                "criterion":["gini","entropy"]}
+
+
+    tree_classifer = DecisionTreeClassifier()
+    tree_cv=RandomizedSearchCV(tree_classifer,param_dist,cv=5)
+    tree_cv.fit(X_train, y_train)
+
+    printingScores(tree_cv, X_train, y_train,True)
+    printingScores(tree_cv,X_test, y_test,False)
+
+
+
+
+Decisiontree_Classifier()
