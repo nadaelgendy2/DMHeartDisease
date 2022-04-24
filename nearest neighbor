@@ -1,16 +1,22 @@
-import pandas as pd
+from pandas.core.frame import DataFrame
+import pandas as pd 
 from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier
-
+import numpy as np
+from sklearn.metrics import classification_report
+from sklearn.metrics import plot_confusion_matrix
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import accuracy_score
+import matplotlib.pyplot as plt
+attributes=['age','sex','cp','trestbps','chol','fbs','restecg','thalach','exang','oldpeak','slope','ca','thal','target']
 data=pd.read_csv('heart.csv')
-x=data.iloc[:,0 :13].values
-y=data['target'].values
-x_train,x_test,y_train,y_test=train_test_split(x,y,test_size=0.2,random_state=0)
+
+x=np.array(data.iloc[:,0:13])
+y=np.array(data['target'])
+x_train,x_test,y_train,y_test=train_test_split(x,y,test_size=0.2,random_state=42)
 knn = KNeighborsClassifier(n_neighbors=13)
 knn.fit(x_train, y_train)
 
+
 # Calculate the accuracy of the model
-print(knn.score(x_test, y_test))
-
-
-
+print("accuracy : {}".format(knn.score(x_test, y_test)))
