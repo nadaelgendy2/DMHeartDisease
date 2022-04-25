@@ -34,15 +34,15 @@ HD=pd.DataFrame(HD)
 print(HD.shape)
 
 #shuffling and sampling data by stratified sampling
-HD=HD.sample(frac=1)
-dsgroup=HD.groupby('age', group_keys=False)
-dssample=dsgroup.apply(lambda x: x.sample(frac=0.6))
-print(dssample.shape)
+#HD=HD.sample(frac=1)
+#dsgroup=HD.groupby('age', group_keys=False)
+#dssample=dsgroup.apply(lambda x: x.sample(frac=0.6))
+#print(dssample.shape)
 
 #train and test data
 x=dssample.drop('target',axis=1)
 y=dssample.target
-x_train,x_test,y_train,y_test=train_test_split(x,y,test_size=0.3, random_state=0)
+x_train,x_test,y_train,y_test=train_test_split(x,y,test_size=0.3, random_state=1)
 
 #applaying naive bayes
 GHD=GaussianNB()
